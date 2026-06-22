@@ -1,0 +1,10 @@
+{
+  "project": "next-app-router-rsc",
+  "description": "Healthy Next.js App Router project with explicit RSC boundaries: server-only data layer in lib/db.ts ('use server'), client islands in components/Form.tsx ('use client'), shared utilities in lib/utils.ts. Verifies (1) zero false-positive 'rsc-leak' contract violations on legal client→shared and server→shared imports, (2) directives correctly override the app/ default-server convention.",
+  "rev": "local-fixture",
+  "expected": {
+    "truePositives": [],
+    "falsePositives": [],
+    "missed": []
+  }
+}

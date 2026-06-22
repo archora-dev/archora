@@ -1,0 +1,219 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* base */
+  --color-bg: #fafbfc;
+  --color-surface: #ffffff;
+  --color-surface-2: #f4f5f8;
+  --color-border: #e3e5eb;
+  --color-border-strong: #a8acb8;
+
+  /* text */
+  --color-text: #0f1115;
+  --color-text-muted: #4a4f5b;
+  --color-text-subtle: #8a8f9e;
+
+  /* accent */
+  --color-primary: #7c6dff;
+  --color-primary-glow: #a8b5ff;
+  --color-primary-fg: #ffffff;
+
+  /* semantic */
+  --color-success: #16a34a;
+  --color-warning: #ffb454;
+  --color-danger: #ff5d6c;
+  --color-info: #0284c7;
+
+  /* graph: reference architecture-map palette. */
+  --color-graph-node-default: #5f7fbd;
+  --color-graph-node-hot: #ff8a3d;
+  --color-graph-edge: #6987be;
+  --color-graph-edge-cycle: #ff8a3d;
+  --color-graph-bg: #050914;
+  --color-graph-bg-depth: #07111f;
+  --color-graph-bg-vignette: rgb(42 85 170 / 0.18);
+  --color-graph-panel-bg: rgb(8 13 26 / 0.78);
+  --color-graph-panel-border: rgb(129 151 190 / 0.16);
+
+  --color-cluster-1: #33d7ff;
+  --color-cluster-2: #4f7cff;
+  --color-cluster-3: #8b5cf6;
+  --color-cluster-4: #b45cff;
+  --color-cluster-5: #36e2c2;
+  --color-cluster-6: #6aa6ff;
+  --color-cluster-7: #7c6dff;
+  --color-cluster-8: #58d0f8;
+
+  /* radii */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+
+  /* depth */
+  --elev-1:
+    0 0 0 1px rgb(15 17 21 / 0.06) inset, 0 1px 0 rgb(255 255 255 / 0.6) inset,
+    0 1px 2px rgb(15 17 21 / 0.04);
+  --elev-2:
+    0 0 0 1px rgb(15 17 21 / 0.07) inset, 0 1px 0 rgb(255 255 255 / 0.7) inset,
+    0 1px 2px rgb(15 17 21 / 0.05), 0 8px 24px -8px rgb(15 17 21 / 0.08);
+  --elev-3:
+    0 0 0 1px rgb(15 17 21 / 0.08) inset, 0 1px 0 rgb(255 255 255 / 0.8) inset,
+    0 4px 8px rgb(15 17 21 / 0.08), 0 20px 40px -12px rgb(15 17 21 / 0.12);
+
+  /* motion */
+  --motion-fast: 120ms cubic-bezier(0.32, 0.72, 0, 1);
+  --motion-base: 200ms cubic-bezier(0.32, 0.72, 0, 1);
+  --motion-slow: 320ms cubic-bezier(0.16, 1, 0.3, 1);
+  --motion-spring: cubic-bezier(0.32, 0.72, 0, 1);
+
+  /* focus */
+  --ring-focus: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-primary);
+
+  /* fonts */
+  --font-sans: 'InterVariable', 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  /* spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+}
+
+[data-theme='dark'] {
+  /* base */
+  --color-bg: #0a0c10;
+  --color-surface: #11141a;
+  --color-surface-2: #181c25;
+  --color-border: #232834;
+  --color-border-strong: #4a5160;
+
+  --color-text: #eef0f5;
+  --color-text-muted: #9aa0b0;
+  --color-text-subtle: #6b7283;
+
+  --color-primary: #7c6dff;
+  --color-primary-glow: #a8b5ff;
+  --color-primary-fg: #ffffff;
+
+  --color-success: #22c55e;
+  --color-warning: #ffb454;
+  --color-danger: #ff5d6c;
+  --color-info: #38bdf8;
+
+  --color-graph-node-default: #6f94d8;
+  --color-graph-node-hot: #ff8a3d;
+  --color-graph-edge: #6987be;
+  --color-graph-edge-cycle: #ff8a3d;
+  --color-graph-bg: #050914;
+  --color-graph-bg-depth: #07111f;
+  --color-graph-bg-vignette: rgb(42 85 170 / 0.18);
+  --color-graph-panel-bg: rgb(8 13 26 / 0.78);
+  --color-graph-panel-border: rgb(129 151 190 / 0.16);
+
+  --color-cluster-1: #33d7ff;
+  --color-cluster-2: #4f7cff;
+  --color-cluster-3: #8b5cf6;
+  --color-cluster-4: #b45cff;
+  --color-cluster-5: #36e2c2;
+  --color-cluster-6: #6aa6ff;
+  --color-cluster-7: #7c6dff;
+  --color-cluster-8: #58d0f8;
+
+  /* depth */
+  --elev-1:
+    0 0 0 1px rgb(255 255 255 / 0.04) inset, 0 1px 0 rgb(255 255 255 / 0.05) inset,
+    0 1px 2px rgb(0 0 0 / 0.4);
+  --elev-2:
+    0 0 0 1px rgb(255 255 255 / 0.05) inset, 0 1px 0 rgb(255 255 255 / 0.06) inset,
+    0 1px 2px rgb(0 0 0 / 0.5), 0 8px 24px -8px rgb(0 0 0 / 0.6);
+  --elev-3:
+    0 0 0 1px rgb(255 255 255 / 0.06) inset, 0 1px 0 rgb(255 255 255 / 0.08) inset,
+    0 4px 8px rgb(0 0 0 / 0.5), 0 20px 40px -12px rgb(0 0 0 / 0.7);
+
+  /* focus */
+  --ring-focus: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-primary);
+}
+
+html,
+body,
+#app {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-feature-settings:
+    'cv11' on,
+    'ss03' on,
+    'ss04' on,
+    'cv02' on;
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  transition:
+    background-color 120ms ease,
+    color 120ms ease;
+}
+
+/* Dark-mode noise reduces gradient banding. */
+[data-theme='dark'] body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='3'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.6 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
+  background-repeat: repeat;
+}
+
+h1,
+h2,
+h3 {
+  letter-spacing: -0.02em;
+}
+
+/* loosening на мелком — даёт читаемость на 12px */
+.text-xs {
+  letter-spacing: 0.01em;
+}
+
+/* mono — slashed zero + табличные цифры для чисел в метриках */
+.font-mono {
+  font-feature-settings:
+    'zero' on,
+    'ss01' on,
+    'tnum' on;
+}
+
+/* унифицированный focus-ring через @layer components — заменяет хаотичные `outline-none
+ * focus-visible:ring-2 focus-visible:ring-primary` по компонентам. Двойной outline в стиле
+ * macOS: ring-offset на bg создаёт gap, ring — primary-glow вокруг. Stacks с любым box-shadow
+ * (включая shadow-elev-X на Card/Modal/Dropdown), потому что Tailwind ring через свой
+ * --tw-ring-shadow не конфликтует с custom shadow. */
+@layer components {
+  .focus-ring {
+    @apply outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg;
+  }
+}
+
+/* respect prefers-reduced-motion (a11y, Tauri macOS «reduce motion» тоже ловит) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

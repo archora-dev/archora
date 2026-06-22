@@ -1,0 +1,42 @@
+name: Action smoke
+
+on:
+  pull_request:
+    paths:
+      - action.yml
+      - .github/actions/archora/action.yml
+      - .github/workflows/action-smoke.yml
+      - packages/cli/**
+      - packages/core/**
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run local Archora action
+        uses: ./
+        with:
+          command: report
+          path: packages/core/src/analyzer/__fixtures__/sample-vue-app
+          format: md
+          output: archora-action-smoke.md
+          quiet: 'true'
+
+      - name: Check report artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s archora-action-smoke.md
+          grep -q "Archora" archora-action-smoke.md
+
+      - name: Upload smoke report
+        uses: actions/upload-artifact@v4
+        with:
+          name: archora-action-smoke-report
+          path: archora-action-smoke.md

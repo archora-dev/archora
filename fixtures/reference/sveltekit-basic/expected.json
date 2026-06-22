@@ -1,0 +1,10 @@
+{
+  "project": "sveltekit-basic",
+  "description": "Minimal healthy SvelteKit app: file-based routes (+layout.svelte, +page.svelte), nested route (/dashboard), data load (+page.ts), server endpoint (+server.ts), $lib aliased components/stores/utils. Verifies that SvelteKit entry-point conventions (+page/+layout/+server) prevent file-system routes from being flagged as isolated clusters.",
+  "rev": "local-fixture",
+  "expected": {
+    "truePositives": [],
+    "falsePositives": [],
+    "missed": []
+  }
+}

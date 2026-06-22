@@ -1,0 +1,5 @@
+{
+  "name": "sample-vue-app",
+  "private": true,
+  "dependencies": { "vue": "^3.5.0", "vue-router": "^4.4.0", "pinia": "^2.2.0" }
+}

@@ -1,0 +1,10 @@
+{
+  "project": "shadcn-app-basic",
+  "description": "Minimal healthy shadcn/ui-style app: lowercase components/ui/* primitives (button, card, input, label) consumed via @/-aliased imports, lib/utils with the canonical cn() helper, single page using all primitives. Verifies that the shadcn convention (lowercase filenames, named exports, @/lib/utils, components consumed exactly once each) does not produce false positives.",
+  "rev": "local-fixture",
+  "expected": {
+    "truePositives": [],
+    "falsePositives": [],
+    "missed": []
+  }
+}

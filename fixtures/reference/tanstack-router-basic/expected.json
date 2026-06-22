@@ -1,0 +1,10 @@
+{
+  "project": "tanstack-router-basic",
+  "description": "Minimal healthy TanStack Router + TanStack Query app (code-based routing): root layout, two routes, header with icon, hooks for data, lib utils. Verifies that code-based router setup works end-to-end without false positives — every route is reached via static imports, no codegen required.",
+  "rev": "local-fixture",
+  "expected": {
+    "truePositives": [],
+    "falsePositives": [],
+    "missed": []
+  }
+}

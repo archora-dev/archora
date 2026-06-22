@@ -1,0 +1,1 @@
+{ "name":"sveltekit-server","version":"0.0.0","private":true,"dependencies":{"@sveltejs/kit":"2.5.0","svelte":"4.2.0"} }

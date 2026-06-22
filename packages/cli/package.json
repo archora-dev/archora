@@ -1,0 +1,53 @@
+{
+  "name": "@archora/cli",
+  "version": "1.3.0",
+  "type": "module",
+  "description": "Command-line interface for Archora. Runs the analyzer, produces JSON/Markdown/JUnit/HTML reports, diffs against a baseline snapshot, and exits with an error code when configurable thresholds are crossed (designed for CI gates).",
+  "author": "Archora <archora@archora.dev>",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/archora-dev/archora#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/archora-dev/archora.git",
+    "directory": "packages/cli"
+  },
+  "bugs": {
+    "url": "https://github.com/archora-dev/archora/issues"
+  },
+  "keywords": [
+    "architecture",
+    "frontend",
+    "dependency-analysis",
+    "cycles",
+    "ci",
+    "code-review"
+  ],
+  "bin": {
+    "archora": "dist/index.js"
+  },
+  "main": "./dist/index.js",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "archora": "vite-node src/index.ts --",
+    "build": "vite build --config vite.config.ts",
+    "prepack": "npm run build && node -e \"import('node:fs').then(({chmodSync})=>chmodSync('dist/index.js',0o755))\""
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@vue/compiler-sfc": "^3.5.35",
+    "ignore": "^7.0.5",
+    "typescript": "~5.9.3"
+  },
+  "devDependencies": {
+    "vite-node": "^2.1.4"
+  }
+}

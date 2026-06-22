@@ -1,0 +1,10 @@
+{
+  "project": "vue-spa-basic",
+  "description": "Minimal healthy Vue SPA exercising unplugin-vue-components auto-imports. App.vue uses <AppHeader/>, <AppFooter/>, <HomeView/> in template without importing them in <script setup> — analyzer must recover those edges via the auto-import registry walk over src/components/**/*.vue. AppHeader uses <SearchIcon/> auto-imported as well. Verifies: (1) zero false-positive 'isolated-cluster' for components only referenced via templates, (2) 'auto-import' edge kind populated.",
+  "rev": "local-fixture",
+  "expected": {
+    "truePositives": [],
+    "falsePositives": [],
+    "missed": []
+  }
+}

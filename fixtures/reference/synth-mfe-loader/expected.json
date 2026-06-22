@@ -1,0 +1,34 @@
+{
+  "project": "synth-mfe-loader",
+  "description": "Synthetic micro-frontend host: dynamic MFE loader via template-literal import(). Models the failure mode where modules loaded at runtime appear as isolated clusters.",
+  "rev": "local-fixture",
+  "expected": {
+    "truePositives": [],
+    "falsePositives": [
+      {
+        "kind": "isolated-cluster",
+        "modules": [
+          "src/mfes/users/index.ts",
+          "src/mfes/users/UsersWidget.ts",
+          "src/mfes/users/usersService.ts"
+        ],
+        "note": "users/* is loaded via dynamicMfeLoader('users') -> import(`../mfes/${name}/index`). Static analysis misses the template-literal import."
+      },
+      {
+        "kind": "isolated-cluster",
+        "modules": [
+          "src/mfes/products/index.ts",
+          "src/mfes/products/ProductsWidget.ts",
+          "src/mfes/products/productsService.ts"
+        ],
+        "note": "products/* is loaded via dynamicMfeLoader('products') -> same template-literal pattern."
+      },
+      {
+        "kind": "unused-utility",
+        "modules": ["src/utils/mfeDisplayName.ts"],
+        "note": "mfeDisplayName is integration code that gets registered at runtime; should not be flagged as dead util."
+      }
+    ],
+    "missed": []
+  }
+}

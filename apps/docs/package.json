@@ -1,0 +1,17 @@
+{
+  "name": "@archora/docs",
+  "version": "1.3.0",
+  "private": true,
+  "description": "Archora documentation site (VitePress).",
+  "author": "Archora <archora@archora.dev>",
+  "license": "BUSL-1.1",
+  "type": "module",
+  "scripts": {
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview"
+  },
+  "devDependencies": {
+    "vitepress": "^1.5.0"
+  }
+}

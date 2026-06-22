@@ -1,0 +1,119 @@
+name: Archora
+description: Run local-first frontend architecture checks in CI.
+branding:
+  icon: activity
+  color: blue
+
+inputs:
+  command:
+    description: CLI command to run.
+    required: false
+    default: check
+  path:
+    description: Repository path to analyze. Relative paths resolve from the workflow workspace; absolute paths are accepted.
+    required: false
+    default: .
+  fail-on:
+    description: Space, comma, or newline separated --fail-on rules for the check command.
+    required: false
+    default: grade:D cycles:0
+  base:
+    description: Optional baseline JSON path for diff/check/report. Relative paths resolve from the workflow workspace; absolute paths are accepted.
+    required: false
+    default: ''
+  format:
+    description: Optional report format for the report command.
+    required: false
+    default: ''
+  output:
+    description: Optional output file path. Relative paths resolve from the workflow workspace; absolute paths are accepted.
+    required: false
+    default: ''
+  pr-comment:
+    description: Add --pr-comment for compact review output with stable comment markers.
+    required: false
+    default: 'false'
+  changed-files:
+    description: Comma-separated changed module paths for review --changed-files.
+    required: false
+    default: ''
+  quiet:
+    description: Suppress CLI progress on stderr.
+    required: false
+    default: 'true'
+
+runs:
+  using: composite
+  steps:
+    - name: Build Archora CLI
+      shell: bash
+      run: |
+        set -euo pipefail
+        cd "$GITHUB_ACTION_PATH"
+        npm ci
+        npm run cli:build
+
+    - name: Run Archora
+      shell: bash
+      env:
+        ARCHORA_COMMAND: ${{ inputs.command }}
+        ARCHORA_PATH: ${{ inputs.path }}
+        ARCHORA_FAIL_ON: ${{ inputs.fail-on }}
+        ARCHORA_BASE: ${{ inputs.base }}
+        ARCHORA_FORMAT: ${{ inputs.format }}
+        ARCHORA_OUTPUT: ${{ inputs.output }}
+        ARCHORA_PR_COMMENT: ${{ inputs.pr-comment }}
+        ARCHORA_CHANGED_FILES: ${{ inputs.changed-files }}
+        ARCHORA_QUIET: ${{ inputs.quiet }}
+      run: |
+        set -euo pipefail
+
+        cli="$GITHUB_ACTION_PATH/packages/cli/dist/index.js"
+        if [[ "$ARCHORA_PATH" = /* ]]; then
+          target="$ARCHORA_PATH"
+        else
+          target="$GITHUB_WORKSPACE/$ARCHORA_PATH"
+        fi
+        args=("$ARCHORA_COMMAND" "$target")
+
+        if [[ -n "$ARCHORA_FORMAT" ]]; then
+          args+=("--format" "$ARCHORA_FORMAT")
+        fi
+
+        if [[ -n "$ARCHORA_BASE" ]]; then
+          if [[ "$ARCHORA_BASE" = /* ]]; then
+            args+=("--base" "$ARCHORA_BASE")
+          else
+            args+=("--base" "$GITHUB_WORKSPACE/$ARCHORA_BASE")
+          fi
+        fi
+
+        if [[ -n "$ARCHORA_OUTPUT" ]]; then
+          if [[ "$ARCHORA_OUTPUT" = /* ]]; then
+            args+=("--output" "$ARCHORA_OUTPUT")
+          else
+            args+=("--output" "$GITHUB_WORKSPACE/$ARCHORA_OUTPUT")
+          fi
+        fi
+
+        if [[ "$ARCHORA_COMMAND" == "check" && -n "$ARCHORA_FAIL_ON" ]]; then
+          normalized="${ARCHORA_FAIL_ON//,/ }"
+          while IFS= read -r rule; do
+            [[ -z "$rule" ]] && continue
+            args+=("--fail-on" "$rule")
+          done < <(printf '%s\n' $normalized)
+        fi
+
+        if [[ "$ARCHORA_PR_COMMENT" == "true" ]]; then
+          args+=("--pr-comment")
+        fi
+
+        if [[ -n "$ARCHORA_CHANGED_FILES" ]]; then
+          args+=("--changed-files" "$ARCHORA_CHANGED_FILES")
+        fi
+
+        if [[ "$ARCHORA_QUIET" == "true" ]]; then
+          args+=("--quiet")
+        fi
+
+        node "$cli" "${args[@]}"

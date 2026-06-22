@@ -1,0 +1,36 @@
+{
+  "name": "@archora/core",
+  "version": "1.3.0",
+  "type": "module",
+  "description": "Framework-independent analyzer core for Archora. Builds the dependency model, detects cycles, computes metrics and recommendations from any FileSource. No Vue, Pinia or Tauri dependencies.",
+  "author": "Archora <archora@archora.dev>",
+  "license": "Apache-2.0",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": "./src/index.ts",
+    "./analyzer": "./src/analyzer/index.ts",
+    "./analyzer/sources/nodeFsFileSource": "./src/analyzer/sources/nodeFsFileSource.ts",
+    "./diff": "./src/diff/index.ts",
+    "./report": "./src/report/buildJsonReport.ts",
+    "./config": "./src/config/frontScopeConfig.ts",
+    "./cache": "./src/cache/index.ts",
+    "./analyzer/bundle": "./src/analyzer/bundle/index.ts",
+    "./git": "./src/git/readGitHistory.ts"
+  },
+  "dependencies": {
+    "@vue/compiler-sfc": "^3.5.35",
+    "ignore": "^7.0.5",
+    "typescript": "~5.9.3"
+  },
+  "peerDependencies": {},
+  "peerDependenciesMeta": {},
+  "publishConfig": {
+    "access": "public"
+  }
+}

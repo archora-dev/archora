@@ -1,0 +1,37 @@
+# dependencies
+node_modules/
+
+# build outputs
+dist/
+coverage/
+.vite/
+*.tsbuildinfo
+
+# browser/test artifacts
+.ms-playwright/
+playwright-report/
+test-results/
+artifacts/
+screens/
+screenshots/
+
+# local audit/report artifacts
+docs/architecture-explorer-acceptance-report.md
+docs/build-bundle-risk-audit.md
+PROJECT_OVERVIEW.md
+
+# local license material
+.env.local
+.license/
+
+# Tauri/Rust build outputs
+src-tauri/target/
+src-tauri/gen/
+
+# editor/system files
+.idea/
+.vscode/
+.DS_Store
+*.log
+
+qa-sandbox/

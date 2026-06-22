@@ -1,0 +1,10 @@
+{
+  "project": "nuxt-dashboard-basic",
+  "description": "Minimal healthy Nuxt 3 dashboard: app.vue root, file-based pages (index, dashboard), default layout, components/ auto-imports (Nuxt convention, including nested components/dashboard/StatCard.vue), composables, util. Verifies that Nuxt entry-point conventions (app.vue, pages/**, layouts/**) and Nuxt components/ auto-import resolution work end-to-end without false positives.",
+  "rev": "local-fixture",
+  "expected": {
+    "truePositives": [],
+    "falsePositives": [],
+    "missed": []
+  }
+}

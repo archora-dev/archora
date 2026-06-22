@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run test:coverage
+      - run: npm run cli:smoke:tarball
+      - run: npm run build
+      # Production deps only — dev vulns tracked in SECURITY.md.
+      - run: npm audit --omit=dev --audit-level=moderate
+      # Bench gate on reference corpus. Thresholds below v1.0 (90/80) while
+      # we tune heuristics — raise once the corpus stabilizes.
+      - run: npm run bench -- --threshold-precision=0.85 --threshold-recall=0.7
+
+  tauri:
+    runs-on: ubuntu-latest
+    needs: web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri -> target
+      - name: Install Tauri Linux deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            pkg-config libdbus-1-dev libwebkit2gtk-4.1-dev libsoup-3.0-dev \
+            libssl-dev libayatana-appindicator3-dev librsvg2-dev libjavascriptcoregtk-4.1-dev
+      - run: npm ci
+      - run: npm run test:rust
+      - name: Tauri build (no bundle)
+        run: npm run tauri:build -- --no-bundle

@@ -1,0 +1,10 @@
+{
+  "project": "react-admin-basic",
+  "description": "Minimal healthy react-admin app: <Admin> with two resources (users, posts), each with List/Edit/Create components, custom Layout, simpleRest dataProvider, shared formatDate util consumed by both Lists. Verifies that the resource pattern (App.tsx as a hub, statically importing all CRUD pages) does not produce false positives.",
+  "rev": "local-fixture",
+  "expected": {
+    "truePositives": [],
+    "falsePositives": [],
+    "missed": []
+  }
+}

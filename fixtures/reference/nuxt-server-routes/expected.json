@@ -1,0 +1,6 @@
+{
+  "project": "nuxt-server-routes",
+  "description": "Healthy Nuxt 3 layout with server-side API routes (server/api/**), shared composables (composables/**) and client pages (pages/**). Verifies that Nuxt's server/ folder convention is detected and shared composables imported from both sides do not raise rsc-leak violations.",
+  "rev": "local-fixture",
+  "expected": { "truePositives": [], "falsePositives": [], "missed": [] }
+}

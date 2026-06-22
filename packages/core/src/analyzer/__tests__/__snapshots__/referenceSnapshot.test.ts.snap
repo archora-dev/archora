@@ -1,0 +1,145 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`reference corpus snapshots > next-app-router-rsc: stable summary 1`] = `
+{
+  "archDebtGrade": "B",
+  "cycles": 0,
+  "edges": 4,
+  "modules": 4,
+  "project": "next-app-router-rsc",
+  "recommendations": 0,
+  "recommendationsByKind": {},
+}
+`;
+
+exports[`reference corpus snapshots > nuxt-dashboard-basic: stable summary 1`] = `
+{
+  "archDebtGrade": "B",
+  "cycles": 0,
+  "edges": 6,
+  "modules": 9,
+  "project": "nuxt-dashboard-basic",
+  "recommendations": 0,
+  "recommendationsByKind": {},
+}
+`;
+
+exports[`reference corpus snapshots > nuxt-server-routes: stable summary 1`] = `
+{
+  "archDebtGrade": "A",
+  "cycles": 0,
+  "edges": 2,
+  "modules": 3,
+  "project": "nuxt-server-routes",
+  "recommendations": 0,
+  "recommendationsByKind": {},
+}
+`;
+
+exports[`reference corpus snapshots > react-admin-basic: stable summary 1`] = `
+{
+  "archDebtGrade": "A",
+  "cycles": 0,
+  "edges": 11,
+  "modules": 11,
+  "project": "react-admin-basic",
+  "recommendations": 0,
+  "recommendationsByKind": {},
+}
+`;
+
+exports[`reference corpus snapshots > react-spa-basic: stable summary 1`] = `
+{
+  "archDebtGrade": "B",
+  "cycles": 0,
+  "edges": 11,
+  "modules": 9,
+  "project": "react-spa-basic",
+  "recommendations": 0,
+  "recommendationsByKind": {},
+}
+`;
+
+exports[`reference corpus snapshots > shadcn-app-basic: stable summary 1`] = `
+{
+  "archDebtGrade": "B",
+  "cycles": 0,
+  "edges": 10,
+  "modules": 8,
+  "project": "shadcn-app-basic",
+  "recommendations": 0,
+  "recommendationsByKind": {},
+}
+`;
+
+exports[`reference corpus snapshots > svelte-spa-basic: stable summary 1`] = `
+{
+  "archDebtGrade": "B",
+  "cycles": 0,
+  "edges": 11,
+  "modules": 9,
+  "project": "svelte-spa-basic",
+  "recommendations": 0,
+  "recommendationsByKind": {},
+}
+`;
+
+exports[`reference corpus snapshots > sveltekit-basic: stable summary 1`] = `
+{
+  "archDebtGrade": "B",
+  "cycles": 0,
+  "edges": 8,
+  "modules": 11,
+  "project": "sveltekit-basic",
+  "recommendations": 0,
+  "recommendationsByKind": {},
+}
+`;
+
+exports[`reference corpus snapshots > sveltekit-server: stable summary 1`] = `
+{
+  "archDebtGrade": "A",
+  "cycles": 0,
+  "edges": 5,
+  "modules": 8,
+  "project": "sveltekit-server",
+  "recommendations": 0,
+  "recommendationsByKind": {},
+}
+`;
+
+exports[`reference corpus snapshots > synth-mfe-loader: stable summary 1`] = `
+{
+  "archDebtGrade": "A",
+  "cycles": 0,
+  "edges": 29,
+  "modules": 15,
+  "project": "synth-mfe-loader",
+  "recommendations": 0,
+  "recommendationsByKind": {},
+}
+`;
+
+exports[`reference corpus snapshots > tanstack-router-basic: stable summary 1`] = `
+{
+  "archDebtGrade": "B",
+  "cycles": 0,
+  "edges": 10,
+  "modules": 11,
+  "project": "tanstack-router-basic",
+  "recommendations": 0,
+  "recommendationsByKind": {},
+}
+`;
+
+exports[`reference corpus snapshots > vue-spa-basic: stable summary 1`] = `
+{
+  "archDebtGrade": "B",
+  "cycles": 0,
+  "edges": 9,
+  "modules": 8,
+  "project": "vue-spa-basic",
+  "recommendations": 0,
+  "recommendationsByKind": {},
+}
+`;

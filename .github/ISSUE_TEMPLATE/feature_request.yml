@@ -1,0 +1,48 @@
+name: Feature request
+description: Suggest a new analyzer signal, UI affordance, CLI flag, or workflow improvement.
+title: '[feat] '
+labels: ['enhancement']
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem you ran into
+      description: What were you trying to do? What got in the way? Focus on the situation, not the solution.
+      placeholder: |
+        When auditing a 1500-module Nuxt app I needed to see which features depend on a single shared store, but the cycles view groups them by SCC and there's no way to pivot by "consumers of module X".
+    validations:
+      required: true
+
+  - type: textarea
+    id: idea
+    attributes:
+      label: Idea (optional)
+      description: How you'd see it working. Sketch is fine — solving the problem above matters more than the exact shape.
+      placeholder: |
+        A "consumers" panel that lists modules importing the selected one, sorted by depth and severity.
+    validations:
+      required: false
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: What you tried instead
+      description: Workarounds, similar tools, manual approach. Helps understand the gap.
+      placeholder: |
+        Exported JSON and grepped through it; works but loses the layer context.
+    validations:
+      required: false
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Scope
+      options:
+        - Analyzer (signals, rules, parsers)
+        - Graph / UI
+        - CLI
+        - Reports / export
+        - Desktop / Tauri
+        - Other
+    validations:
+      required: true

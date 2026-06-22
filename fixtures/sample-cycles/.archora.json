@@ -1,0 +1,6 @@
+{
+  "layerOverrides": {
+    "src/a.ts": "shared",
+    "src/b.ts": "entities"
+  }
+}

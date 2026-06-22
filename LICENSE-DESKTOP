@@ -1,0 +1,117 @@
+Archora Proprietary Source-Available License (Paid-Use-Only)
+
+Copyright (c) 2026 Aleksandr Kotov (the "Licensor"). All rights reserved.
+
+The source code and any other materials made available in this repository
+(collectively, the "Software") are proprietary and confidential to the
+Licensor. They are published in source-available form for the sole purpose
+of allowing prospective licensees to inspect and evaluate the Software
+before purchasing a commercial license.
+
+This Software is NOT open source. The publication of this repository on a
+public hosting platform does NOT constitute a grant of any open-source or
+free-software license, and does NOT grant any rights beyond those expressly
+stated below.
+
+1. Limited Permission Granted Without a Paid License
+
+   Without entering into a separate written commercial license with the
+   Licensor, you are permitted to do ONLY the following with the Software:
+
+   (a) view and read the source code via the hosting platform on which
+       it is published;
+   (b) clone or download a copy strictly for the purpose of personally
+       evaluating whether to obtain a paid commercial license, for a
+       reasonable evaluation period not exceeding thirty (30) days; and
+   (c) discuss the Software publicly (e.g. cite, link, or quote short
+       excerpts for commentary, criticism, news reporting, teaching,
+       scholarship, or research) consistent with applicable fair use
+       or fair dealing law.
+
+   No other rights are granted. In particular, and without limitation,
+   the following are NOT permitted without a separate paid commercial
+   license signed by the Licensor:
+
+   - any use of the Software, in whole or in part, in any project,
+     product, service, internal tool, script, pipeline, build, CI job,
+     or deliverable, whether commercial or non-commercial, paid or
+     unpaid, personal or organizational, for-profit or not-for-profit,
+     including hobby and educational projects;
+   - execution of the Software for any purpose other than short-term
+     evaluation by you personally as described in clause 1(b);
+   - copying, modifying, merging, publishing, sublicensing,
+     distributing, selling, hosting, or offering the Software (or any
+     derivative work) as a service to any third party;
+   - removing or altering any copyright, trademark, license, or
+     attribution notices contained in the Software;
+   - using the Software, its source code, or its outputs to train,
+     fine-tune, evaluate, benchmark, or otherwise develop
+     machine-learning or artificial-intelligence models, datasets, or
+     systems;
+   - reverse-engineering the Software for any purpose other than
+     evaluation as described in clause 1(b), to the extent such
+     restriction is permitted by applicable law.
+
+2. No Implied License
+
+   No license is granted by implication, estoppel, exhaustion, course of
+   dealing, or otherwise. Public availability of this repository does
+   not change this.
+
+3. Commercial License Required
+
+   To use the Software for any purpose beyond the limited evaluation
+   described in Section 1, you must first obtain a paid commercial
+   license from the Licensor. Pricing and terms are available on
+   request — see COMMERCIAL-LICENSE.md.
+
+4. Trademarks
+
+   "Archora" and any associated names, logos, and brands are trademarks
+   of the Licensor. No trademark rights are granted by this license.
+   Forks, modifications, or derivative works (where permitted under a
+   separate commercial license) may not use these marks without the
+   Licensor's prior written consent.
+
+5. Term and Termination
+
+   Your permission under Section 1 terminates automatically and
+   immediately upon any breach of this license, or upon written notice
+   from the Licensor. Upon termination you must delete all copies of
+   the Software in your possession or control, except for archival
+   copies you are required by law to retain.
+
+6. No Warranty
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+   EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+   MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND
+   NON-INFRINGEMENT.
+
+7. Limitation of Liability
+
+   TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL
+   THE LICENSOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+   EXEMPLARY, OR CONSEQUENTIAL DAMAGES ARISING OUT OF OR IN CONNECTION
+   WITH THE SOFTWARE OR THIS LICENSE, EVEN IF ADVISED OF THE POSSIBILITY
+   OF SUCH DAMAGES.
+
+8. Governing Law
+
+   This license shall be governed by and construed in accordance with
+   the laws applicable at the Licensor's place of residence, without
+   regard to its conflict-of-laws principles.
+
+9. Prior Versions
+
+   Versions of the Software previously distributed under a different
+   license (including, without limitation, the Business Source License
+   1.1) remain governed by the license under which they were originally
+   distributed, with respect to the specific commits to which that
+   prior license applied. From the effective date of this license,
+   subsequent commits and releases are governed exclusively by these
+   terms.
+
+For commercial licensing inquiries, contact:
+  Email:    akotov@archora.dev
+  Telegram: @akotofff

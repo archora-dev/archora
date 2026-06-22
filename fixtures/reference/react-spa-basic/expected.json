@@ -1,0 +1,10 @@
+{
+  "project": "react-spa-basic",
+  "description": "Minimal healthy React SPA: react-router routes (one eager, two via React.lazy + import()), shared Header/icons, hooks, util. Verifies that lazy-imported route components are not flagged as isolated clusters or unused utilities.",
+  "rev": "local-fixture",
+  "expected": {
+    "truePositives": [],
+    "falsePositives": [],
+    "missed": []
+  }
+}

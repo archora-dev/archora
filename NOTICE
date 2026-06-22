@@ -1,0 +1,13 @@
+Archora
+Copyright (c) 2026 Aleksandr Kotov.
+
+The @archora/core and @archora/cli packages in this repository are licensed
+under the Apache License, Version 2.0; see the LICENSE file at the repository
+root and in each package directory.
+
+The Archora desktop application (src-tauri/ and the Vue UI under src/) is
+proprietary, source-available software; see LICENSE-DESKTOP and
+COMMERCIAL-LICENSE.md. It is not covered by the Apache-2.0 grant.
+
+Third-party components bundled with or used by this Software are subject to
+the licenses provided by their respective authors.

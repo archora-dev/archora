@@ -1,0 +1,6 @@
+{
+  "project": "sveltekit-server",
+  "description": "Healthy SvelteKit project that exercises the server/client/shared boundary: +server.ts API endpoint, +page.server.ts data loader, +page.svelte client view, +page.ts universal load. Server-side files share server-only utilities under $lib/server, page components share universal $lib/format. Verifies the +server/+page.server/.server/.client conventions are honored without rsc-leak false positives.",
+  "rev": "local-fixture",
+  "expected": { "truePositives": [], "falsePositives": [], "missed": [] }
+}

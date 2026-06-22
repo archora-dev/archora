@@ -1,0 +1,10 @@
+{
+  "project": "svelte-spa-basic",
+  "description": "Minimal healthy Svelte SPA: one eager route component, two routes lazy-loaded via dynamic import() in {#await} blocks. Verifies that .svelte files are picked up by the analyzer, $lib path-alias works, and lazy route components are not flagged as isolated clusters.",
+  "rev": "local-fixture",
+  "expected": {
+    "truePositives": [],
+    "falsePositives": [],
+    "missed": []
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "react-admin-basic",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "dependencies": {
+    "ra-data-simple-rest": "^5.3.0",
+    "react": "^18.3.0",
+    "react-admin": "^5.3.0",
+    "react-dom": "^18.3.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0",
+    "vite": "^5.4.0"
+  }
+}

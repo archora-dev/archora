@@ -1,0 +1,53 @@
+# Gate pull requests on frontend architecture health.
+#
+# Fails the job if the project grade drops to D (or worse) or if any dependency
+# cycle exists, then posts a Markdown report as a PR comment.
+#
+# Two ways to run it are shown below. Pick one and delete the other.
+name: Architecture check
+
+on:
+  pull_request:
+
+# Needed only for the "post a comment" step.
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  archora:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # --- Option A: the published composite action ---------------------------
+      # Inputs mirror the CLI. `fail-on` accepts space/comma/newline-separated
+      # rules; the job exits non-zero when any rule trips.
+      - name: Run architecture check
+        uses: archora-dev/archora@v1.0.3
+        with:
+          command: check
+          path: .
+          fail-on: grade:D cycles:0
+
+      # --- Option B: plain npx (no action) ------------------------------------
+      # Equivalent gate without the composite action. Uncomment to use, and
+      # remove Option A above.
+      #
+      # - uses: actions/setup-node@v4
+      #   with:
+      #     node-version: 20
+      # - name: Run architecture check
+      #   run: npx -y @archora/cli check . --fail-on grade:D --fail-on cycles:0
+
+      # Render a Markdown report and post it on the PR. `if: always()` so the
+      # report shows up even when the gate above failed.
+      - name: Render report
+        if: always()
+        run: npx -y @archora/cli report . --format md --output archora-report.md
+
+      - name: Comment report on PR
+        if: always()
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          path: archora-report.md

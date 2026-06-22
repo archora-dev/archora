@@ -1,0 +1,21 @@
+# Gate merge requests on frontend architecture health with GitLab CI.
+#
+# Fails the job if the project grade drops to D (or worse) or if any dependency
+# cycle exists. A Markdown report is saved as a job artifact you can open from
+# the pipeline view.
+architecture-check:
+  image: node:20-alpine
+  rules:
+    # Run on merge request pipelines only.
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+  script:
+    # Exits non-zero when any --fail-on rule trips, which fails the job.
+    - npx -y @archora/cli check . --fail-on grade:D --fail-on cycles:0
+  after_script:
+    # Render the report whether or not the gate passed, so it's always available.
+    - npx -y @archora/cli report . --format md --output archora-report.md || true
+  artifacts:
+    when: always
+    paths:
+      - archora-report.md
+    expire_in: 1 week

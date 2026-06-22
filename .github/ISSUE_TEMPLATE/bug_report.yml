@@ -1,0 +1,86 @@
+name: Bug report
+description: Something does not work — analyzer output is wrong, CLI fails, etc.
+title: '[bug] '
+labels: ['bug']
+body:
+  - type: input
+    id: command
+    attributes:
+      label: Command you ran
+      description: The exact CLI invocation (or the action step) that triggered it.
+      placeholder: 'archora check . --fail-on grade:D --fail-on cycles:0'
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-vs-actual
+    attributes:
+      label: Expected vs actual
+      description: What you expected to happen, and what actually happened.
+      placeholder: |
+        Expected: exit 0, no cycles reported.
+        Actual: exit 1, reports a cycle between entities/user and shared/api.
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Minimal reproduction
+      description: >
+        A link to a minimal repo or a small snippet that reproduces this.
+        The smaller the repro, the faster we can fix it. If you can't share
+        code, describe the project shape (module count, framework, monorepo or
+        not) precisely.
+      placeholder: |
+        https://github.com/you/archora-repro
+        or: ~30 modules, React + TS, single package, see attached imports.
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Archora version
+      description: Output of `archora --version` (or the @archora/cli version you ran).
+      placeholder: '1.0.3'
+    validations:
+      required: true
+
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Where you hit it
+      options:
+        - CLI
+        - GitHub Action
+        - Other CI
+        - Desktop app
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: OS
+      placeholder: 'macOS 14.5 / Windows 11 / Ubuntu 24.04'
+    validations:
+      required: true
+
+  - type: input
+    id: node
+    attributes:
+      label: Node.js version
+      description: Output of `node --version`.
+      placeholder: 'v20.11.0'
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / output
+      description: CLI output, console errors, screenshots. Strip anything sensitive.
+      render: shell
+    validations:
+      required: false

@@ -1,0 +1,14 @@
+{
+  "contracts": {
+    "boundaries": [
+      { "name": "features-isolation",
+        "from": "src/features/*/**", "to": "src/features/*/**",
+        "mode": "must-not", "crossInstance": true,
+        "description": "Features must be self-contained" }
+    ],
+    "budgets": [
+      { "name": "shared-no-cycles", "module": "src/shared/**", "maxCycles": 0 },
+      { "name": "ui-loc", "module": "src/shared/ui/**", "maxLoc": 400 }
+    ]
+  }
+}

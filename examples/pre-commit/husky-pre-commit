@@ -1,0 +1,7 @@
+#!/bin/sh
+# husky pre-commit hook. Install with:
+#   cp examples/pre-commit/husky-pre-commit .husky/pre-commit
+#   chmod +x .husky/pre-commit
+#
+# Blocks the commit if the architecture grade drops to D or any cycle exists.
+npx -y @archora/cli check . --fail-on grade:D --fail-on cycles:0
