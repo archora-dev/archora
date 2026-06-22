@@ -1,6 +1,6 @@
 {
   "name": "@archora/docs",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "private": true,
   "description": "Archora documentation site (VitePress).",
   "author": "Archora <archora@archora.dev>",

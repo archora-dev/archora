@@ -1,6 +1,6 @@
 {
   "name": "@archora/cli",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "type": "module",
   "description": "Command-line interface for Archora. Runs the analyzer, produces JSON/Markdown/JUnit/HTML reports, diffs against a baseline snapshot, and exits with an error code when configurable thresholds are crossed (designed for CI gates).",
   "author": "Archora <archora@archora.dev>",
