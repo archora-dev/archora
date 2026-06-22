@@ -418,29 +418,7 @@ pub fn open_in_editor(command: String, path: String, line: Option<u32>) -> Resul
     let parts: Vec<String> = shell_split(cmd);
     let (program, prefix_args) = parts.split_first().ok_or("editor command is empty")?;
 
-    // Per-editor argument shape. Most CLIs accept `path:line:col`, but
-    // JetBrains IDEs want `--line N path`.
-    let mut args: Vec<String> = prefix_args.to_vec();
-    let prog_lower = std::path::Path::new(program)
-        .file_name()
-        .and_then(|s| s.to_str())
-        .unwrap_or(program)
-        .to_lowercase();
-    let is_jetbrains =
-        matches!(prog_lower.as_str(), "idea" | "webstorm" | "pycharm" | "rubymine" | "goland");
-
-    match (is_jetbrains, line) {
-        (true, Some(n)) => {
-            args.push("--line".into());
-            args.push(n.to_string());
-            args.push(path);
-        }
-        (false, Some(n)) => {
-            // code/cursor/subl all understand the goto syntax
-            args.push(format!("{path}:{n}"));
-        }
-        _ => args.push(path),
-    }
+    let args = editor_args(program, prefix_args, path, line);
 
     Command::new(program)
         .args(&args)
@@ -451,6 +429,56 @@ pub fn open_in_editor(command: String, path: String, line: Option<u32>) -> Resul
         .map_err(|e| format!("failed to launch '{program}': {e}"))?;
 
     Ok(())
+}
+
+/// Normalize a launcher binary to a comparable key: drop the directory, the
+/// extension (`.exe`/`.cmd`/`.bat`) and a `64`/`32` bitness suffix. This lets
+/// JetBrains detection match `webstorm`, `webstorm.cmd` and the Windows
+/// `webstorm64.exe` launcher with one table.
+fn editor_program_key(program: &str) -> String {
+    let stem = std::path::Path::new(program)
+        .file_stem()
+        .and_then(|s| s.to_str())
+        .unwrap_or(program)
+        .to_lowercase();
+    stem.strip_suffix("64")
+        .or_else(|| stem.strip_suffix("32"))
+        .unwrap_or(stem.as_str())
+        .to_string()
+}
+
+/// JetBrains IDEs jump to a line via `--line N <path>`, while VS Code, Cursor
+/// and Sublime accept the `<path>:N` goto syntax.
+fn is_jetbrains_editor(program: &str) -> bool {
+    matches!(
+        editor_program_key(program).as_str(),
+        "idea"
+            | "webstorm"
+            | "pycharm"
+            | "phpstorm"
+            | "rubymine"
+            | "goland"
+            | "clion"
+            | "datagrip"
+            | "rider"
+            | "rustrover"
+    )
+}
+
+/// Build the editor argument vector: user-supplied `prefix_args` (e.g.
+/// `--wait`) followed by the path, shaped per editor family for line jumps.
+fn editor_args(program: &str, prefix_args: &[String], path: String, line: Option<u32>) -> Vec<String> {
+    let mut args: Vec<String> = prefix_args.to_vec();
+    match (is_jetbrains_editor(program), line) {
+        (true, Some(n)) => {
+            args.push("--line".into());
+            args.push(n.to_string());
+            args.push(path);
+        }
+        (false, Some(n)) => args.push(format!("{path}:{n}")),
+        _ => args.push(path),
+    }
+    args
 }
 
 // Minimal POSIX-ish splitter: handles single/double quotes and backslash
@@ -752,6 +780,48 @@ mod tests {
     #[test]
     fn shell_split_supports_single_quotes() {
         assert_eq!(shell_split("idea '--line 42'"), vec!["idea", "--line 42"]);
+    }
+
+    // ---------- editor argument shaping -----------------------------------
+
+    #[test]
+    fn editor_args_uses_jetbrains_line_flag() {
+        assert_eq!(
+            editor_args("webstorm", &[], "/p/File.vue".into(), Some(42)),
+            vec!["--line", "42", "/p/File.vue"]
+        );
+    }
+
+    #[test]
+    fn editor_args_detects_windows_jetbrains_launcher() {
+        // Windows launcher carries an extension and a bitness suffix; both must
+        // be stripped before matching, otherwise the goto syntax leaks through
+        // and WebStorm rejects `<path>:<line>` as an invalid path.
+        assert_eq!(
+            editor_args(
+                "C:\\Program Files\\JetBrains\\WebStorm 2025.1\\bin\\webstorm64.exe",
+                &[],
+                "C:\\proj\\src\\File.vue".into(),
+                Some(21),
+            ),
+            vec!["--line", "21", "C:\\proj\\src\\File.vue"]
+        );
+    }
+
+    #[test]
+    fn editor_args_uses_goto_syntax_for_vscode() {
+        assert_eq!(
+            editor_args("code", &["--wait".into()], "/p/File.vue".into(), Some(7)),
+            vec!["--wait", "/p/File.vue:7"]
+        );
+    }
+
+    #[test]
+    fn editor_args_omits_line_when_absent() {
+        assert_eq!(
+            editor_args("code", &[], "/p/File.vue".into(), None),
+            vec!["/p/File.vue"]
+        );
     }
 
     #[tokio::test]
