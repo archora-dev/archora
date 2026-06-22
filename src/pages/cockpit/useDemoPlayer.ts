@@ -1,4 +1,6 @@
 import { onUnmounted, watch } from 'vue';
+import { useScanStore } from '@/entities/scan';
+import { useProjectStore } from '@/entities/project';
 import { useCockpitViewStore } from '@/features/cockpit-view';
 import { useDemoStore, type DemoStep } from '@/features/demo-walkthrough';
 import { openSampleProject } from '@/features/open-sample-project';
@@ -23,6 +25,8 @@ export function useDemoPlayer(options: DemoPlayerOptions): {
 } {
   const demo = useDemoStore();
   const view = useCockpitViewStore();
+  const scan = useScanStore();
+  const project = useProjectStore();
 
   let timer: ReturnType<typeof setTimeout> | undefined;
 
@@ -82,6 +86,11 @@ export function useDemoPlayer(options: DemoPlayerOptions): {
   function exit(): void {
     clearTimer();
     demo.exit();
+    // The demo loaded the sample only to narrate it; drop it on finish/exit so
+    // the user lands back on the project-loading screen, not in a stray scan.
+    scan.reset();
+    project.clear();
+    view.reset();
   }
   function next(): void {
     demo.next();
