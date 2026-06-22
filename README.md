@@ -76,7 +76,7 @@ Recommended GitHub Actions path:
 - uses: actions/setup-node@v4
   with:
     node-version: 22
-- run: npx -y @archora/cli@1.3.0 check . --fail-on grade:F
+- run: npx -y @archora/cli@2.0.0 check . --fail-on grade:F
 ```
 
 From source:

@@ -1,6 +1,6 @@
 {
   "name": "@archora/core",
-  "version": "1.3.0",
+  "version": "2.0.0",
   "type": "module",
   "description": "Framework-independent analyzer core for Archora. Builds the dependency model, detects cycles, computes metrics and recommendations from any FileSource. No Vue, Pinia or Tauri dependencies.",
   "author": "Archora <archora@archora.dev>",

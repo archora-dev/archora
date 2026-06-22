@@ -1,7 +1,7 @@
 {
   "name": "archora",
   "private": true,
-  "version": "1.3.0",
+  "version": "2.0.0",
   "description": "Architectural reconnaissance for large frontend codebases. Builds a dependency model, detects cycles, surfaces hot zones.",
   "author": "Archora <archora@archora.dev>",
   "license": "SEE LICENSE IN LICENSE-DESKTOP",
