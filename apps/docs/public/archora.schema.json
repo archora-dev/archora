@@ -1,0 +1,238 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://docs.archora.dev/archora.schema.json",
+  "title": "Archora project configuration",
+  "description": "Per-project tuning for Archora (.archora.json / archora.json). Every field is optional; without a config the analyzer uses built-in defaults.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON Schema reference for editor autocomplete and validation. Ignored by the analyzer."
+    },
+    "entryPoints": {
+      "type": "array",
+      "description": "Module paths the analyzer treats as graph roots. Reachability and dead-code signals are computed from these. Detected automatically when omitted.",
+      "items": { "type": "string" }
+    },
+    "ignore": {
+      "type": "array",
+      "description": "Glob patterns (gitignore-style) excluded from discovery. Use for generated clients, vendored code, or anything you don't want scored.",
+      "items": { "type": "string" }
+    },
+    "layerOverrides": {
+      "type": "object",
+      "description": "Map of glob -> layer, forcing the layer classification for matched modules. Valid layers: app, pages, widgets, features, entities, shared, core.",
+      "additionalProperties": { "type": "string" }
+    },
+    "dynamicLoaders": {
+      "type": "array",
+      "description": "Custom dynamic-import resolvers, e.g. a loader that maps an argument to a module path.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "resolveAs"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Function name that performs the dynamic load (e.g. `loadRemote`)."
+          },
+          "argIndex": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Zero-based index of the argument holding the module key. Defaults to 0."
+          },
+          "resolveAs": {
+            "type": "string",
+            "description": "Path template; `{0}` is replaced with the literal argument value (e.g. `./mfes/{0}/index`)."
+          }
+        }
+      }
+    },
+    "contracts": {
+      "type": "object",
+      "description": "Architecture-as-code: boundary rules, per-module budgets and frozen public surfaces. The whole block is opt-in.",
+      "additionalProperties": false,
+      "properties": {
+        "boundaries": {
+          "type": "array",
+          "description": "Forbid or whitelist edges crossing module boundaries.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "from", "mode", "to"],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Stable identifier shown in CLI output and UI grouping."
+              },
+              "from": {
+                "type": "string",
+                "description": "Glob matching the importing module ids whose outgoing edges this rule controls."
+              },
+              "mode": {
+                "type": "string",
+                "enum": ["must-not", "can-only"],
+                "description": "`must-not`: from-modules may NOT import to-modules. `can-only`: from-modules may import ONLY to-modules."
+              },
+              "to": {
+                "type": "string",
+                "description": "Glob matching the imported module ids."
+              },
+              "except": {
+                "type": "array",
+                "description": "Whitelist globs matched against the importee, applied after the rule predicate.",
+                "items": { "type": "string" }
+              },
+              "crossInstance": {
+                "type": "boolean",
+                "description": "Sibling-isolation knob for `features/*/**` <-> `features/*/**` shapes: only flag edges between different wildcard instances. Defaults to false."
+              },
+              "description": {
+                "type": "string",
+                "description": "Free-form text shown in UI tooltips and CLI failure output."
+              },
+              "severity": {
+                "type": "string",
+                "enum": ["error", "warning"],
+                "description": "Whether a violation fails the check (error) or only reports (warning)."
+              }
+            }
+          }
+        },
+        "budgets": {
+          "type": "array",
+          "description": "Numeric ceilings on per-module metrics. A rule trips for every matched module that exceeds a bound.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "module"],
+            "properties": {
+              "name": { "type": "string", "description": "Stable identifier for diagnostics." },
+              "module": { "type": "string", "description": "Glob matching module ids the budget applies to." },
+              "maxFanIn": { "type": "integer", "minimum": 0, "description": "Maximum allowed incoming edges." },
+              "maxFanOut": { "type": "integer", "minimum": 0, "description": "Maximum allowed outgoing edges." },
+              "maxLoc": { "type": "integer", "minimum": 0, "description": "Maximum lines of code." },
+              "maxCycles": { "type": "integer", "minimum": 0, "description": "Maximum cycles touching any matched module." },
+              "description": { "type": "string" },
+              "severity": { "type": "string", "enum": ["error", "warning"] }
+            }
+          }
+        },
+        "apiStability": {
+          "type": "array",
+          "description": "Declare public surfaces as frozen or additions-only. Currently stored as intent; the breaking-change diff is computed by the semantic surface check.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "module", "policy"],
+            "properties": {
+              "name": { "type": "string" },
+              "module": { "type": "string", "description": "Glob matching the public-surface module ids." },
+              "policy": {
+                "type": "string",
+                "enum": ["frozen", "additions-only"],
+                "description": "`frozen`: no changes. `additions-only`: new exports allowed, removals/changes are not."
+              },
+              "description": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "analysis": {
+      "type": "object",
+      "description": "Generated-code handling. Build outputs are skipped by discovery regardless of this block.",
+      "additionalProperties": false,
+      "properties": {
+        "generated": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["mode"],
+          "properties": {
+            "mode": {
+              "type": "string",
+              "enum": ["exclude", "classify"],
+              "description": "`exclude`: drop generated modules from the graph. `classify`: keep them but mark them so they don't skew findings."
+            },
+            "patterns": {
+              "type": "array",
+              "description": "Explicit globs identifying generated modules.",
+              "items": { "type": "string" }
+            },
+            "presets": {
+              "type": "array",
+              "description": "Built-in pattern bundles for common generators.",
+              "items": {
+                "type": "string",
+                "enum": ["openapi", "generated-folder", "generated-suffix", "vendor", "rtk-query"]
+              }
+            }
+          }
+        }
+      }
+    },
+    "bundle": {
+      "type": "object",
+      "description": "Bundle-aware analysis thresholds.",
+      "additionalProperties": false,
+      "properties": {
+        "heavyChunkBytes": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Chunk size in bytes that triggers a `heavy-chunk` signal."
+        },
+        "duplicateMinChunks": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "A module appearing in at least this many chunks triggers a `duplicate` signal."
+        },
+        "soloHotShare": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Share (0..1) of a heavy chunk a single module must occupy to trigger a `solo-hot` signal."
+        }
+      }
+    },
+    "signals": {
+      "type": "object",
+      "description": "Signal trust layer: insight limits and persisted suppressions.",
+      "additionalProperties": false,
+      "properties": {
+        "suppressions": {
+          "type": "array",
+          "description": "Persisted suppressions for individual signals, written by the app when you dismiss a finding.",
+          "items": { "type": "object" }
+        },
+        "insightLimit": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Maximum number of insights surfaced per scan."
+        },
+        "minInsightSeverity": {
+          "type": "string",
+          "enum": ["info", "low", "medium", "high", "critical"],
+          "description": "Lowest severity an insight must reach to be surfaced."
+        },
+        "minInsightConfidence": {
+          "type": "string",
+          "enum": ["low", "medium", "high"],
+          "description": "Lowest confidence an insight must reach to be surfaced."
+        }
+      }
+    },
+    "architectureBudget": {
+      "type": "object",
+      "description": "Repository-wide CI gate, used by `archora check`. Limits the current scan or regressions against a base.",
+      "additionalProperties": false,
+      "properties": {
+        "maxDebtScore": { "type": "number", "minimum": 0, "description": "Maximum allowed architecture-debt score." },
+        "maxCycles": { "type": "integer", "minimum": 0, "description": "Maximum allowed dependency cycles." },
+        "maxCriticalSignals": { "type": "integer", "minimum": 0, "description": "Maximum allowed critical signals." },
+        "maxContractErrors": { "type": "integer", "minimum": 0, "description": "Maximum allowed contract violations at error severity." },
+        "maxHotspotGrowth": { "type": "number", "description": "Maximum allowed hot-zone growth against the comparison base." }
+      }
+    }
+  }
+}

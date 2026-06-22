@@ -21,7 +21,8 @@ describe('cli init', () => {
 
     await expect(runInit(parseArgv(['init', dir, '--dry-run', '--quiet']))).resolves.toBe(0);
 
-    const parsed = JSON.parse(out.flush()) as { entryPoints: string[] };
+    const parsed = JSON.parse(out.flush()) as { $schema: string; entryPoints: string[] };
+    expect(parsed.$schema).toBe('https://docs.archora.dev/archora.schema.json');
     expect(parsed.entryPoints).toEqual(['src/main.ts']);
     await expect(readFile(join(dir, '.archora.json'), 'utf-8')).rejects.toThrow();
   });

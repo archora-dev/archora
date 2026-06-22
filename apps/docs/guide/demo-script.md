@@ -3,6 +3,11 @@
 Use this script when recording screenshots, a short video or a live walkthrough.
 It keeps the demo focused on the product workflow instead of raw metrics.
 
+The Dashboard ships a **Watch a 30-second demo** action that plays this same
+flow over the sample scan — grade → start here → queue → the cycle in context →
+export — auto-advancing with captions. Use it for a hands-off run; use the steps
+below when you want to narrate or capture each screen yourself.
+
 ## 1. Start with the sample
 
 Open **Try sample analysis** from the Dashboard. This avoids filesystem prompts

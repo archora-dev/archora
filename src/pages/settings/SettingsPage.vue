@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, onUnmounted, ref } from 'vue';
 import {
   AlertTriangle,
   Copy,
@@ -13,6 +13,7 @@ import {
 import { compileGlob } from '@/core/analyzer/discover';
 import { useSettingsStore } from '@/entities/settings';
 import { useScanStore } from '@/entities/scan';
+import { useProjectStore } from '@/entities/project';
 import {
   Button,
   Card,
@@ -26,6 +27,11 @@ import {
 } from '@/shared/ui';
 import { LicenseCard } from '@/features/license-activation';
 import { useAnalysisSettingsDirty } from '@/features/scan-project';
+import {
+  planStarterConfig,
+  writeStarterConfig,
+  type StarterConfigPlan,
+} from '@/features/generate-archora-config';
 import { isTauri, useTheme, type ThemeMode } from '@/shared/lib';
 
 const settingsStore = useSettingsStore();
@@ -33,8 +39,15 @@ const toast = useToast();
 
 const watcherAvailable = isTauri();
 const scanStore = useScanStore();
+const projectStore = useProjectStore();
 const resetOpen = ref(false);
 const generatedPathInput = ref('');
+
+const CONFIG_DOCS_URL = 'https://docs.archora.dev/guide/configuration';
+const hasProject = computed(() => projectStore.current !== null);
+const generatingConfig = ref(false);
+const overwriteConfigOpen = ref(false);
+const pendingConfig = ref<StarterConfigPlan | null>(null);
 
 const { mode: themeMode, setMode: setThemeMode } = useTheme();
 
@@ -154,6 +167,73 @@ async function copyGeneratedSnippet(): Promise<void> {
     toast.success('Config snippet copied');
   } catch {
     toast.danger('Failed to copy snippet');
+  }
+}
+
+/** Delay before confirming an editor-command edit, so the toast fires once the
+ * user stops typing instead of on every keystroke. */
+const EDITOR_SAVED_DELAY_MS = 600;
+let editorSavedTimer: ReturnType<typeof setTimeout> | undefined;
+
+function onEditorCommandInput(value: string): void {
+  settingsStore.setEditor('command', value);
+  if (editorSavedTimer) clearTimeout(editorSavedTimer);
+  editorSavedTimer = setTimeout(() => {
+    toast.success('Editor command saved');
+  }, EDITOR_SAVED_DELAY_MS);
+}
+
+onUnmounted(() => {
+  if (editorSavedTimer) clearTimeout(editorSavedTimer);
+});
+
+async function commitConfig(plan: StarterConfigPlan): Promise<void> {
+  try {
+    await writeStarterConfig(plan.targetPath, plan.json);
+    toast.success(plan.existingFile ? 'Overwrote .archora.json' : 'Created .archora.json');
+  } catch {
+    toast.danger('Could not write .archora.json');
+  }
+}
+
+async function onGenerateConfig(): Promise<void> {
+  const project = projectStore.current;
+  if (!project) {
+    toast.warning('Open a project first');
+    return;
+  }
+  generatingConfig.value = true;
+  try {
+    const { reopenProject } = await import('@/features/open-project');
+    const { source } = await reopenProject(project.id);
+    const plan = await planStarterConfig(source);
+    if (plan.existingFile) {
+      pendingConfig.value = plan;
+      overwriteConfigOpen.value = true;
+    } else {
+      await commitConfig(plan);
+    }
+  } catch {
+    toast.danger('Could not generate a starter config');
+  } finally {
+    generatingConfig.value = false;
+  }
+}
+
+async function confirmOverwriteConfig(): Promise<void> {
+  const plan = pendingConfig.value;
+  overwriteConfigOpen.value = false;
+  pendingConfig.value = null;
+  if (plan) await commitConfig(plan);
+}
+
+async function copyDocsLink(): Promise<void> {
+  try {
+    if (!navigator.clipboard) throw new Error('clipboard unavailable');
+    await navigator.clipboard.writeText(CONFIG_DOCS_URL);
+    toast.success('Docs link copied');
+  } catch {
+    toast.danger('Failed to copy link');
   }
 }
 
@@ -453,7 +533,7 @@ function confirmReset(): void {
                 :model-value="settingsStore.settings.editor.command"
                 placeholder="code"
                 data-test="editor-command"
-                @update:model-value="settingsStore.setEditor('command', String($event))"
+                @update:model-value="onEditorCommandInput(String($event))"
               />
               <p class="mt-2 text-xs text-text-muted">
                 Examples: code (VS Code), cursor, subl (Sublime), webstorm, idea.
@@ -472,15 +552,48 @@ function confirmReset(): void {
                   Project policies
                 </h2>
                 <p class="mt-1 text-sm text-text-muted">
-                  Project-scoped rules live next to the code, not in this preferences pane.
+                  Boundaries, generated paths and contracts live in
+                  <code class="rounded bg-surface-2 px-1 py-0.5 font-mono">.archora.json</code>
+                  next to the code, not in this preferences pane.
                 </p>
               </div>
             </div>
-            <div class="mt-4 flex flex-col gap-2">
-              <p class="text-xs text-text-subtle">
-                Project-level policies (boundaries, generated paths, contracts) live in
-                <code class="rounded bg-surface-2 px-1 py-0.5 font-mono">.archora.json</code>
+
+            <div class="mt-5 flex flex-col gap-3">
+              <p class="text-sm text-text-muted">
+                Generate a starter config from the open project. Entry points and generated-code
+                presets are detected from the codebase; everything else ships commented with sane
+                defaults to edit by hand.
               </p>
+              <Button
+                v-if="watcherAvailable"
+                variant="primary"
+                :disabled="!hasProject || generatingConfig"
+                data-test="generate-config"
+                @click="onGenerateConfig"
+              >
+                <Spinner v-if="generatingConfig" class="size-3.5" />
+                <FileCode2 v-else class="size-3.5" />
+                Generate .archora.json
+              </Button>
+              <p v-else class="text-xs text-text-subtle">
+                Run <code class="rounded bg-surface-2 px-1 py-0.5 font-mono">archora init</code> in
+                the project root to scaffold one, or write it by hand.
+              </p>
+              <div class="flex items-center gap-2">
+                <code
+                  class="min-w-0 flex-1 truncate rounded bg-surface-2 px-2 py-1 font-mono text-xs text-text-muted"
+                  >{{ CONFIG_DOCS_URL }}</code
+                >
+                <IconButton
+                  :icon="Copy"
+                  size="sm"
+                  variant="ghost"
+                  label="Copy configuration docs link"
+                  data-test="copy-config-docs"
+                  @click="copyDocsLink"
+                />
+              </div>
             </div>
           </Card>
 
@@ -506,6 +619,29 @@ function confirmReset(): void {
         </aside>
       </div>
     </div>
+
+    <Modal
+      v-model:open="overwriteConfigOpen"
+      title="Overwrite .archora.json?"
+      @close="overwriteConfigOpen = false"
+    >
+      <p class="text-sm text-text-muted">
+        <code class="rounded bg-surface-2 px-1 py-0.5 font-mono">{{
+          pendingConfig?.existingFile ?? '.archora.json'
+        }}</code>
+        already exists in this project. Replacing it discards the current contents.
+      </p>
+      <template #footer>
+        <Button @click="overwriteConfigOpen = false">Cancel</Button>
+        <Button
+          variant="danger"
+          data-test="confirm-overwrite-config"
+          @click="confirmOverwriteConfig"
+        >
+          Overwrite
+        </Button>
+      </template>
+    </Modal>
 
     <Modal v-model:open="resetOpen" title="Reset settings?" @close="resetOpen = false">
       <p class="text-sm text-text-muted">

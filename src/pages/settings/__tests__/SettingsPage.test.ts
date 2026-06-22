@@ -1,8 +1,9 @@
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import { createMemoryHistory, createRouter, type Router } from 'vue-router';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import SettingsPage from '../SettingsPage.vue';
+import { useToast } from '@/shared/ui';
 import { useSettingsStore } from '@/entities/settings';
 import { useScanStore } from '@/entities/scan';
 import type { ScanResult } from '@/core/analyzer/types';
@@ -109,6 +110,31 @@ describe('SettingsPage', () => {
     const warnings = wrapper.findAll('[data-test="generated-path-warning"]');
     expect(warnings).toHaveLength(1);
     expect(warnings[0]!.text()).toContain('50%');
+  });
+
+  it('confirms an editor command edit with a toast once typing settles', async () => {
+    vi.useFakeTimers();
+    try {
+      const toast = useToast();
+      toast.toasts.value.forEach((t) => toast.dismiss(t.id));
+
+      const wrapper = mount(SettingsPage, {
+        global: { plugins: [makeRouter()], stubs: { Modal: true } },
+      });
+      const settings = useSettingsStore();
+
+      await wrapper.get('[data-test="editor-command"]').setValue('webstorm');
+
+      // Stored right away, but not announced until the user pauses typing.
+      expect(settings.settings.editor.command).toBe('webstorm');
+      expect(toast.toasts.value.some((t) => t.title === 'Editor command saved')).toBe(false);
+
+      vi.advanceTimersByTime(600);
+
+      expect(toast.toasts.value.some((t) => t.title === 'Editor command saved')).toBe(true);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('keeps the settings page scrollable so it fits short desktop windows', () => {

@@ -18,6 +18,9 @@ export type InitialArchoraDetection =
   | 'workspace-packages'
   | 'generated-openapi';
 
+/** Canonical JSON Schema URL written into generated configs for editor support. */
+export const ARCHORA_CONFIG_SCHEMA_URL = 'https://docs.archora.dev/archora.schema.json';
+
 const DEFAULT_IGNORES = [
   'dist/**',
   'build/**',
@@ -56,6 +59,7 @@ export function buildInitialArchoraConfig(
   const detected = detectProjectShape(fileSet, packageJson);
 
   const config: ArchoraConfig = {
+    $schema: ARCHORA_CONFIG_SCHEMA_URL,
     entryPoints: pickEntryPoints(files, fileSet, detected),
     ignore: DEFAULT_IGNORES,
     signals: {

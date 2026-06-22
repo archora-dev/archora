@@ -4,7 +4,25 @@ Archora reads an optional `.archora.json` or `archora.json` from the project roo
 
 Use `archora init . --dry-run` to inspect a starter config for the current
 project. Run `archora init .` to write `.archora.json`; existing config files
-are not overwritten unless you pass `--force`.
+are not overwritten unless you pass `--force`. In the desktop app, **Settings →
+Project policies → Generate .archora.json** writes the same starter config for
+the open project and asks before overwriting an existing one.
+
+## Editor autocomplete
+
+Generated configs start with a `$schema` reference:
+
+```json
+{
+  "$schema": "https://docs.archora.dev/archora.schema.json",
+  "entryPoints": ["src/main.ts"]
+}
+```
+
+Editors that understand JSON Schema (VS Code, the JetBrains IDEs) use it for
+field completion, inline descriptions and validation as you type. JSON has no
+comments, so the schema is where each field is documented. The analyzer ignores
+`$schema`; add it by hand to a config that lacks one.
 
 ## Schema
 

@@ -3,6 +3,9 @@ import type { SignalConfidence, SignalSeverity, Suppression } from '../analyzer/
 
 // .archora.json - per-project tuning, all fields optional
 export interface ArchoraConfig {
+  // JSON Schema reference for editor autocomplete and field docs. Ignored by
+  // the analyzer; `archora init` writes it so editors can validate the file.
+  $schema?: string;
   entryPoints?: string[];
   // user-defined dynamic loaders: e.g. { name: 'load', resolveAs: './mfes/{0}/index' }
   dynamicLoaders?: DynamicLoaderConfig[];
@@ -259,6 +262,7 @@ function normalizeConfig(
   for (const key of Object.keys(r)) {
     if (
       ![
+        '$schema',
         'entryPoints',
         'dynamicLoaders',
         'ignore',

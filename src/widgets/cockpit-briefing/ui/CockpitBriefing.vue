@@ -7,6 +7,13 @@ import type { ArchitecturePriorityIssueKind } from '@/entities/architecture';
 import type { FindingType } from '@/entities/finding';
 import type { BriefingText, CockpitBriefing } from '../model/buildBriefing';
 
+/** Plural noun for the count chip on a grade driver. */
+function driverCountLabel(count: number, kind: FindingType): string {
+  if (kind === 'cycle') return plural(count, `${count} cycle`, `${count} cycles`);
+  if (kind === 'layer-violation') return plural(count, `${count} violation`, `${count} violations`);
+  return plural(count, `${count} hotspot`, `${count} hotspots`);
+}
+
 /** Priority issue kinds map onto the queue's finding-type vocabulary for labels. */
 function asType(kind: ArchitecturePriorityIssueKind): FindingType {
   if (kind === 'cycle') return 'cycle';
@@ -29,6 +36,7 @@ const props = defineProps<{ briefing: CockpitBriefing }>();
 const emit = defineEmits<{
   (e: 'see-all'): void;
   (e: 'open-priority', targetId: string): void;
+  (e: 'open-driver', kind: FindingType): void;
   (e: 'set-baseline'): void;
 }>();
 
@@ -179,17 +187,30 @@ onMounted(() => {
     >
       <span class="briefing-drivers-label">Why this grade</span>
       <ul class="briefing-drivers-list">
-        <li v-for="driver in props.briefing.gradeDrivers" :key="driver.label" class="grade-driver">
-          <span class="grade-driver-name">{{ driver.label }}</span>
-          <span class="grade-driver-track">
-            <span
-              class="grade-driver-fill"
-              :style="{
-                width: driversVisible ? `${Math.round(driver.share * 100)}%` : '0%',
-              }"
-            />
-          </span>
-          <span class="grade-driver-share">{{ Math.round(driver.share * 100) }}%</span>
+        <li v-for="driver in props.briefing.gradeDrivers" :key="driver.label">
+          <button
+            type="button"
+            class="grade-driver"
+            :data-test="`grade-driver-${driver.kind}`"
+            :title="`Show ${driver.label.toLowerCase()} in the queue`"
+            @click="emit('open-driver', driver.kind)"
+          >
+            <span class="grade-driver-name">
+              {{ driver.label }}
+              <span v-if="driver.count !== null" class="grade-driver-count">
+                {{ driverCountLabel(driver.count, driver.kind) }}
+              </span>
+            </span>
+            <span class="grade-driver-track">
+              <span
+                class="grade-driver-fill"
+                :style="{
+                  width: driversVisible ? `${Math.round(driver.share * 100)}%` : '0%',
+                }"
+              />
+            </span>
+            <span class="grade-driver-share">{{ Math.round(driver.share * 100) }}%</span>
+          </button>
         </li>
       </ul>
     </div>
@@ -334,13 +355,37 @@ onMounted(() => {
 }
 .grade-driver {
   display: grid;
-  grid-template-columns: 8.5rem minmax(0, 1fr) 2.5rem;
+  grid-template-columns: 11rem minmax(0, 1fr) 2.5rem;
   align-items: center;
   gap: 0.6rem;
+  width: 100%;
+  padding: 0.3rem 0.45rem;
+  margin: -0.3rem -0.45rem;
+  border: 0;
+  border-radius: var(--radius-md, 0.5rem);
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--motion-fast, 120ms) ease-out;
+}
+.grade-driver:hover {
+  background: var(--arch-color-surface-2, rgb(124 109 255 / 0.08));
+}
+.grade-driver:focus-visible {
+  outline: 2px solid var(--arch-color-accent, #7c6dff);
+  outline-offset: 1px;
 }
 .grade-driver-name {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
   font-size: 0.82rem;
   color: var(--arch-color-fg);
+}
+.grade-driver-count {
+  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--arch-color-fg-muted);
 }
 .grade-driver-track {
   height: 0.45rem;

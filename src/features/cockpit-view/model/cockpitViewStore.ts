@@ -32,6 +32,9 @@ export const useCockpitViewStore = defineStore('cockpitView', () => {
       ? types.value.filter((t) => t !== type)
       : [...types.value, type];
   }
+  function setTypes(next: FindingType[]): void {
+    types.value = [...next];
+  }
   function toggleSeverity(severity: FindingSeverity): void {
     severities.value = severities.value.includes(severity)
       ? severities.value.filter((s) => s !== severity)
@@ -69,6 +72,7 @@ export const useCockpitViewStore = defineStore('cockpitView', () => {
     setMode,
     setLens,
     toggleType,
+    setTypes,
     toggleSeverity,
     setIncludeBeta,
     setShowTriaged,

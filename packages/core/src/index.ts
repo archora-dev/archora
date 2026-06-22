@@ -99,6 +99,7 @@ export {
   type ProjectPolicyPreset,
 } from './codegen/configSnippets';
 export {
+  ARCHORA_CONFIG_SCHEMA_URL,
   buildInitialArchoraConfig,
   buildInitialArchoraConfigJson,
   type BuildInitialArchoraConfigInput,

@@ -3,6 +3,7 @@ import type {
   ArchitecturePriorityIssue,
   ArchitecturePriorityIssueKind,
 } from '@/entities/architecture';
+import type { FindingType } from '@/entities/finding';
 
 export type BriefingGrade = 'A' | 'B' | 'C' | 'D' | 'F';
 
@@ -39,6 +40,10 @@ export interface GradeDriver {
   value: number;
   /** Fraction of the total debt this driver accounts for, 0–1. */
   share: number;
+  /** Finding type this driver maps to, so the UI can open the matching queue. */
+  kind: FindingType;
+  /** Concrete count behind the driver, or null when it has no direct tally. */
+  count: number | null;
 }
 
 export interface CockpitBriefing {
@@ -131,7 +136,7 @@ export function buildBriefing(input: BuildBriefingInput): CockpitBriefing {
       layerViolations: overview.totals.layerViolations,
       hotZones: overview.totals.hotZones,
     },
-    gradeDrivers: gradeDrivers(input.breakdown),
+    gradeDrivers: gradeDrivers(input.breakdown, overview.totals),
     priorities: selectVariedPriorities(
       input.isBarrel
         ? overview.priorityIssues.filter((i) => !input.isBarrel!(i.targetId))
@@ -158,14 +163,33 @@ export function buildBriefing(input: BuildBriefingInput): CockpitBriefing {
 
 // Turns the debt-score breakdown into ranked, weighted drivers so the grade is
 // explainable: the heaviest contributor is the highest-leverage thing to fix.
-function gradeDrivers(breakdown: BuildBriefingInput['breakdown']): GradeDriver[] {
+// Each driver carries the concrete count behind it (where one exists) and the
+// finding type it maps to, so the UI can both quantify and open it.
+function gradeDrivers(
+  breakdown: BuildBriefingInput['breakdown'],
+  totals: ArchitectureOverview['totals'],
+): GradeDriver[] {
   if (!breakdown) return [];
-  const entries: GradeDriver[] = [
-    { label: 'Cycles', value: breakdown.cycles, share: 0 },
-    { label: 'Layer violations', value: breakdown.layerViolations, share: 0 },
-    { label: 'Hot zones', value: breakdown.hotZones, share: 0 },
-    { label: 'Coupling', value: breakdown.coupling, share: 0 },
-  ].filter((driver) => driver.value > 0);
+  const all: GradeDriver[] = [
+    { label: 'Cycles', value: breakdown.cycles, share: 0, kind: 'cycle', count: totals.cycles },
+    {
+      label: 'Layer violations',
+      value: breakdown.layerViolations,
+      share: 0,
+      kind: 'layer-violation',
+      count: totals.layerViolations,
+    },
+    {
+      label: 'Hot zones',
+      value: breakdown.hotZones,
+      share: 0,
+      kind: 'hotspot',
+      count: totals.hotZones,
+    },
+    // Coupling is a derived score with no single tally to show.
+    { label: 'Coupling', value: breakdown.coupling, share: 0, kind: 'coupling', count: null },
+  ];
+  const entries = all.filter((driver) => driver.value > 0);
   const total = entries.reduce((sum, driver) => sum + driver.value, 0);
   if (total === 0) return [];
   for (const driver of entries) driver.share = driver.value / total;

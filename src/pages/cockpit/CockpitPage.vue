@@ -13,12 +13,12 @@ import { useScanStore } from '@/entities/scan';
 import { useProjectStore } from '@/entities/project';
 import { buildArchitectureOverview } from '@/entities/architecture';
 import { Button, useToast } from '@/shared/ui';
-import { RefreshCw, Layers, Flame, Link2, FileWarning } from 'lucide-vue-next';
+import { RefreshCw, Layers, Flame, Link2, FileWarning, Play } from 'lucide-vue-next';
 import { useRouter } from 'vue-router';
 import { computed, ref, watch, onMounted, onUnmounted } from 'vue';
 import { OPEN_SEARCH_EVENT, OPEN_PROJECT_EVENT, consumeOpenProjectRequest } from '@/shared/lib';
 import { useDrilldownStore, resolveOpenInContext } from '@/features/cockpit-view';
-import { type Finding } from '@/entities/finding';
+import { type Finding, type FindingType } from '@/entities/finding';
 import { useHistoryStore } from '@/entities/history';
 import {
   pickDirectory,
@@ -28,7 +28,9 @@ import {
 } from '@/features/open-project';
 import { runScanFlow } from '@/features/scan-project';
 import { openSampleProject } from '@/features/open-sample-project';
+import { DemoOverlay, useDemoStore, DEMO_STEP_COUNT } from '@/features/demo-walkthrough';
 import { useCockpit } from './useCockpit';
+import { useDemoPlayer } from './useDemoPlayer';
 
 const router = useRouter();
 const scan = useScanStore();
@@ -36,7 +38,11 @@ const project = useProjectStore();
 const history = useHistoryStore();
 const toast = useToast();
 const drill = useDrilldownStore();
+const demo = useDemoStore();
 const { result, view } = useCockpit();
+const demoPlayer = useDemoPlayer({
+  resolveCycleFindingId: () => result.value?.findings.find((f) => f.type === 'cycle')?.id ?? null,
+});
 
 const selectedFinding = computed(
   () => result.value?.findings.find((f) => f.id === view.selectedId) ?? null,
@@ -87,6 +93,15 @@ function openPriority(anchorId: string): void {
   view.setLens('everything');
   const finding = findPriorityFinding(anchorId);
   if (finding) view.select(finding.id);
+}
+
+// A grade driver in the briefing answers "why this grade" — clicking it filters
+// the queue to that finding type so "why" turns into the list to act on.
+function openDriver(kind: FindingType): void {
+  view.setMode('queue');
+  view.setLens('everything');
+  view.setTypes([kind]);
+  view.select(null);
 }
 
 // Picking a finding in the queue closes any open drilldown drawer so its detail
@@ -207,6 +222,15 @@ onUnmounted(() => window.removeEventListener(OPEN_PROJECT_EVENT, openProject));
           <Button variant="primary" size="lg" @click="openProject"> Open project </Button>
           <Button variant="secondary" size="lg" @click="openSample"> Try sample </Button>
         </div>
+        <button
+          type="button"
+          class="cockpit-empty-demo cockpit-enter cockpit-enter-5"
+          data-test="start-demo"
+          @click="demoPlayer.start()"
+        >
+          <Play :size="14" />
+          Watch a 30-second demo
+        </button>
       </div>
     </div>
     <CockpitBriefing
@@ -214,6 +238,7 @@ onUnmounted(() => window.removeEventListener(OPEN_PROJECT_EVENT, openProject));
       :briefing="briefing"
       @see-all="view.setMode('queue')"
       @open-priority="openPriority"
+      @open-driver="openDriver"
       @set-baseline="goToBaseline"
     />
     <template v-else>
@@ -268,6 +293,19 @@ onUnmounted(() => window.removeEventListener(OPEN_PROJECT_EVENT, openProject));
       </div>
     </template>
     <DrilldownHost />
+    <DemoOverlay
+      v-if="demo.active && demo.step"
+      :step="demo.step"
+      :index="demo.index"
+      :total="DEMO_STEP_COUNT"
+      :paused="demo.paused"
+      :is-first="demo.isFirst"
+      :is-last="demo.isLast"
+      @next="demoPlayer.next()"
+      @prev="demoPlayer.prev()"
+      @toggle-pause="demoPlayer.togglePause()"
+      @exit="demoPlayer.exit()"
+    />
   </div>
 </template>
 
@@ -372,6 +410,29 @@ onUnmounted(() => window.removeEventListener(OPEN_PROJECT_EVENT, openProject));
   display: flex;
   gap: 0.75rem;
   margin-top: 0.5rem;
+}
+
+.cockpit-empty-demo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.85rem;
+  padding: 0.25rem 0.5rem;
+  border: 0;
+  border-radius: var(--radius-md, 0.5rem);
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  font-weight: 560;
+  cursor: pointer;
+  transition: color var(--motion-fast, 120ms) ease-out;
+}
+.cockpit-empty-demo:hover {
+  color: var(--color-primary);
+}
+.cockpit-empty-demo:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 /* Staggered entrance for hero elements */

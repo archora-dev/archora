@@ -76,6 +76,12 @@ describe('buildBriefing', () => {
     ]);
     expect(briefing.gradeDrivers[0]?.share).toBeCloseTo(0.6);
     expect(briefing.gradeDrivers.some((d) => d.label === 'Coupling')).toBe(false);
+    // Each driver maps to a finding type and carries the concrete count behind it.
+    expect(briefing.gradeDrivers.map((d) => [d.kind, d.count])).toEqual([
+      ['cycle', 2],
+      ['layer-violation', 1],
+      ['hotspot', 4],
+    ]);
   });
 
   it('has no grade drivers when no breakdown is supplied', () => {
