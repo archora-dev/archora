@@ -435,12 +435,17 @@ pub fn open_in_editor(command: String, path: String, line: Option<u32>) -> Resul
 /// extension (`.exe`/`.cmd`/`.bat`) and a `64`/`32` bitness suffix. This lets
 /// JetBrains detection match `webstorm`, `webstorm.cmd` and the Windows
 /// `webstorm64.exe` launcher with one table.
+///
+/// Splits on both `/` and `\` regardless of host OS: `std::path::Path` ignores
+/// backslashes on Unix, so a Windows launcher path must be parsed by hand for
+/// the result to be stable on every platform (and in CI).
 fn editor_program_key(program: &str) -> String {
-    let stem = std::path::Path::new(program)
-        .file_stem()
-        .and_then(|s| s.to_str())
-        .unwrap_or(program)
-        .to_lowercase();
+    let file = program
+        .rsplit(['/', '\\'])
+        .next()
+        .filter(|s| !s.is_empty())
+        .unwrap_or(program);
+    let stem = file.rsplit_once('.').map_or(file, |(name, _)| name).to_lowercase();
     stem.strip_suffix("64")
         .or_else(|| stem.strip_suffix("32"))
         .unwrap_or(stem.as_str())
