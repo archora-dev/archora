@@ -43,8 +43,8 @@
     "access": "public"
   },
   "dependencies": {
-    "@vue/compiler-sfc": "^3.5.35",
-    "ignore": "^7.0.5",
+    "@vue/compiler-sfc": "^3.5.40",
+    "ignore": "^7.0.6",
     "typescript": "~5.9.3"
   },
   "devDependencies": {
